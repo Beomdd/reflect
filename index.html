@@ -68,7 +68,9 @@
       // 서버가 살아 있는지 먼저 확인(꺼져 있으면 Cloudflare 오류 화면 대신 안내를 보여 준다)
       const h = await withTimeout(url + "healthz", 8000, { mode: "cors" });
       if (!h.ok || !(await h.json()).ok) throw new Error("down");
-      location.replace(url);
+      // ?to=view 로 들어오면 운영진 조회 화면으로(그 외 값은 무시하고 학생 화면으로)
+      const to = new URLSearchParams(location.search).get("to");
+      location.replace(url + (to === "view" ? "view" : ""));
     } catch (e) {
       show(true);
       timer = setTimeout(go, 15000);
